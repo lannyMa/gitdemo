@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="06-部署Master节点tags: master, kube-apiserver, kube-scheduler, kube-controller-manager 部署 master 节点kubernetes master 节点包含的组件：  kube-apiserver kube-scheduler kube-controller-manager  目前这三个组件需要部署在同一台机器上：  k">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/10/27/06-部署Master节点/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="06-部署Master节点tags: master, kube-apiserver, kube-scheduler, kube-controller-manager 部署 master 节点kubernetes master 节点包含的组件：  kube-apiserver kube-scheduler kube-controller-manager  目前这三个组件需要部署在同一台机器上：  k">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-27T01:53:36.177Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="06-部署Master节点tags: master, kube-apiserver, kube-scheduler, kube-controller-manager 部署 master 节点kubernetes master 节点包含的组件：  kube-apiserver kube-scheduler kube-controller-manager  目前这三个组件需要部署在同一台机器上：  k">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/27/06-部署Master节点/"/>
+
+
+
+
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/27/06-部署Master节点/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-27T09:45:16+08:00">
+                2017-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="06-部署Master节点"><a href="#06-部署Master节点" class="headerlink" title="06-部署Master节点"></a>06-部署Master节点</h2><p>tags: master, kube-apiserver, kube-scheduler, kube-controller-manager</p>
+<h1 id="部署-master-节点"><a href="#部署-master-节点" class="headerlink" title="部署 master 节点"></a>部署 master 节点</h1><p>kubernetes master 节点包含的组件：</p>
+<ul>
+<li>kube-apiserver</li>
+<li>kube-scheduler</li>
+<li>kube-controller-manager</li>
+</ul>
+<p>目前这三个组件需要部署在同一台机器上：</p>
+<ul>
+<li><code>kube-scheduler</code>、<code>kube-controller-manager</code> 和 <code>kube-apiserver</code> 三者的功能紧密相关；</li>
+<li>同时只能有一个 <code>kube-scheduler</code>、<code>kube-controller-manager</code> 进程处于工作状态，如果运行多个，则需要通过选举产生一个 leader；</li>
+</ul>
+<p>本文档介绍部署单机 kubernetes master 节点的步骤，<strong>没有实现高可用 master 集群</strong>。</p>
+<p>计划后续再介绍部署 LB 的步骤，客户端 (kubectl、kubelet、kube-proxy) 使用 LB 的 VIP 来访问 kube-apiserver，从而实现高可用 master 集群。</p>
+<p>master 节点与 node 节点上的 Pods 通过 Pod 网络通信，所以需要在 master 节点上部署 Flannel 网络。</p>
+<h2 id="使用的变量"><a href="#使用的变量" class="headerlink" title="使用的变量"></a>使用的变量</h2><p>本文档用到的变量定义如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">export</span> MASTER_IP=10.64.3.7  <span class="comment"># 替换为当前部署的 master 机器 IP</span></div><div class="line">$ <span class="comment"># 导入用到的其它全局变量：SERVICE_CIDR、CLUSTER_CIDR、NODE_PORT_RANGE、ETCD_ENDPOINTS、BOOTSTRAP_TOKEN</span></div><div class="line">$ <span class="built_in">source</span> /root/<span class="built_in">local</span>/bin/environment.sh</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="下载最新版本的二进制文件"><a href="#下载最新版本的二进制文件" class="headerlink" title="下载最新版本的二进制文件"></a>下载最新版本的二进制文件</h2><p>有两种下载方式：</p>
+<ol>
+<li><p>从 <a href="https://github.com/kubernetes/kubernetes/releases" target="_blank" rel="external">github release 页面</a> 下载发布版 tarball，解压后再执行下载脚本</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> wget https://github.com/kubernetes/kubernetes/releases/download/v1.6.2/kubernetes.tar.gz</span></div><div class="line"><span class="meta">$</span><span class="bash"> tar -xzvf kubernetes.tar.gz</span></div><div class="line">...</div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> kubernetes</span></div><div class="line"><span class="meta">$</span><span class="bash"> ./cluster/get-kube-binaries.sh</span></div><div class="line">...</div></pre></td></tr></table></figure>
+</li>
+<li><p>从 <a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG.md" target="_blank" rel="external"><code>CHANGELOG</code>页面</a> 下载 <code>client</code> 或 <code>server</code> tarball 文件</p>
+<p> <code>server</code> 的 tarball <code>kubernetes-server-linux-amd64.tar.gz</code> 已经包含了 <code>client</code>(<code>kubectl</code>) 二进制文件，所以不用单独下载<code>kubernetes-client-linux-amd64.tar.gz</code>文件；</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> <span class="comment"># wget https://dl.k8s.io/v1.6.2/kubernetes-client-linux-amd64.tar.gz</span></span></div><div class="line"><span class="meta">$</span><span class="bash"> wget https://dl.k8s.io/v1.6.2/kubernetes-server-linux-amd64.tar.gz</span></div><div class="line"><span class="meta">$</span><span class="bash"> tar -xzvf kubernetes-server-linux-amd64.tar.gz</span></div><div class="line">...</div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> kubernetes</span></div><div class="line"><span class="meta">$</span><span class="bash"> tar -xzvf  kubernetes-src.tar.gz</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>将二进制文件拷贝到指定路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo cp -r server/bin/&#123;kube-apiserver,kube-controller-manager,kube-scheduler,kubectl,kube-proxy,kubelet&#125; /root/<span class="built_in">local</span>/bin/</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="安装和配置-flanneld"><a href="#安装和配置-flanneld" class="headerlink" title="安装和配置 flanneld"></a>安装和配置 flanneld</h2><p>参考 <a href="./05-部署Flannel网络.md">05-部署Flannel网络.md</a></p>
+<h2 id="创建-kubernetes-证书"><a href="#创建-kubernetes-证书" class="headerlink" title="创建 kubernetes 证书"></a>创建 kubernetes 证书</h2><p>创建 kubernetes 证书签名请求</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">$ cat &gt; kubernetes-csr.json &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"kubernetes"</span>,</div><div class="line">  <span class="string">"hosts"</span>: [</div><div class="line">    <span class="string">"127.0.0.1"</span>,</div><div class="line">    <span class="string">"<span class="variable">$&#123;MASTER_IP&#125;</span>"</span>,</div><div class="line">    <span class="string">"<span class="variable">$&#123;CLUSTER_KUBERNETES_SVC_IP&#125;</span>"</span>,</div><div class="line">    <span class="string">"kubernetes"</span>,</div><div class="line">    <span class="string">"kubernetes.default"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc.cluster"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc.cluster.local"</span></div><div class="line">  ],</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"k8s"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<ul>
+<li>如果 hosts 字段不为空则需要指定授权使用该证书的 <strong>IP 或域名列表</strong>，所以上面分别指定了当前部署的 master 节点主机 IP；</li>
+<li><p>还需要添加 kube-apiserver 注册的名为 <code>kubernetes</code> 的服务 IP (Service Cluster IP)，一般是 kube-apiserver <code>--service-cluster-ip-range</code> 选项值指定的网段的<strong>第一个IP</strong>，如 “10.254.0.1”；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ kubectl get svc kubernetes</div><div class="line">NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</div><div class="line">kubernetes   10.254.0.1   &lt;none&gt;        443/TCP   1d</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>生成 kubernetes 证书和私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -ca=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  -ca-key=/etc/kubernetes/ssl/ca-key.pem \</div><div class="line">  -config=/etc/kubernetes/ssl/ca-config.json \</div><div class="line">  -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes</div><div class="line">$ ls kubernetes*</div><div class="line">kubernetes.csr  kubernetes-csr.json  kubernetes-key.pem  kubernetes.pem</div><div class="line">$ sudo mkdir -p /etc/kubernetes/ssl/</div><div class="line">$ sudo mv kubernetes*.pem /etc/kubernetes/ssl/</div><div class="line">$ rm kubernetes.csr  kubernetes-csr.json</div></pre></td></tr></table></figure>
+<h2 id="配置和启动-kube-apiserver"><a href="#配置和启动-kube-apiserver" class="headerlink" title="配置和启动 kube-apiserver"></a>配置和启动 kube-apiserver</h2><h3 id="创建-kube-apiserver-使用的客户端-token-文件"><a href="#创建-kube-apiserver-使用的客户端-token-文件" class="headerlink" title="创建 kube-apiserver 使用的客户端 token 文件"></a>创建 kube-apiserver 使用的客户端 token 文件</h3><p>kubelet <strong>首次启动</strong>时向 kube-apiserver 发送 TLS Bootstrapping 请求，kube-apiserver 验证 kubelet 请求中的 token 是否与它配置的 token.csv 一致，如果一致则自动为 kubelet生成证书和秘钥。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ <span class="comment"># 导入的 environment.sh 文件定义了 BOOTSTRAP_TOKEN 变量</span></div><div class="line">$ cat &gt; token.csv &lt;&lt;EOF</div><div class="line"><span class="variable">$&#123;BOOTSTRAP_TOKEN&#125;</span>,kubelet-bootstrap,10001,<span class="string">"system:kubelet-bootstrap"</span></div><div class="line">EOF</div><div class="line">$ mv token.csv /etc/kubernetes/</div><div class="line">$</div></pre></td></tr></table></figure>
+<h3 id="创建-kube-apiserver-的-systemd-unit-文件"><a href="#创建-kube-apiserver-的-systemd-unit-文件" class="headerlink" title="创建 kube-apiserver 的 systemd unit 文件"></a>创建 kube-apiserver 的 systemd unit 文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">$ cat  &gt; kube-apiserver.service &lt;&lt;EOF</div><div class="line">[Unit]</div><div class="line">Description=Kubernetes API Server</div><div class="line">Documentation=https://github.com/GoogleCloudPlatform/kubernetes</div><div class="line">After=network.target</div><div class="line"></div><div class="line">[Service]</div><div class="line">ExecStart=/root/<span class="built_in">local</span>/bin/kube-apiserver \\</div><div class="line">  --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\</div><div class="line">  --advertise-address=<span class="variable">$&#123;MASTER_IP&#125;</span> \\</div><div class="line">  --<span class="built_in">bind</span>-address=<span class="variable">$&#123;MASTER_IP&#125;</span> \\</div><div class="line">  --insecure-bind-address=<span class="variable">$&#123;MASTER_IP&#125;</span> \\</div><div class="line">  --authorization-mode=RBAC \\</div><div class="line">  --runtime-config=rbac.authorization.k8s.io/v1alpha1 \\</div><div class="line">  --kubelet-https=<span class="literal">true</span> \\</div><div class="line">  --experimental-bootstrap-token-auth \\</div><div class="line">  --token-auth-file=/etc/kubernetes/token.csv \\</div><div class="line">  --service-cluster-ip-range=<span class="variable">$&#123;SERVICE_CIDR&#125;</span> \\</div><div class="line">  --service-node-port-range=<span class="variable">$&#123;NODE_PORT_RANGE&#125;</span> \\</div><div class="line">  --tls-cert-file=/etc/kubernetes/ssl/kubernetes.pem \\</div><div class="line">  --tls-private-key-file=/etc/kubernetes/ssl/kubernetes-key.pem \\</div><div class="line">  --client-ca-file=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem \\</div><div class="line">  --etcd-cafile=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --etcd-certfile=/etc/kubernetes/ssl/kubernetes.pem \\</div><div class="line">  --etcd-keyfile=/etc/kubernetes/ssl/kubernetes-key.pem \\</div><div class="line">  --etcd-servers=<span class="variable">$&#123;ETCD_ENDPOINTS&#125;</span> \\</div><div class="line">  --<span class="built_in">enable</span>-swagger-ui=<span class="literal">true</span> \\</div><div class="line">  --allow-privileged=<span class="literal">true</span> \\</div><div class="line">  --apiserver-count=3 \\</div><div class="line">  --audit-log-maxage=30 \\</div><div class="line">  --audit-log-maxbackup=3 \\</div><div class="line">  --audit-log-maxsize=100 \\</div><div class="line">  --audit-log-path=/var/lib/audit.log \\</div><div class="line">  --event-ttl=1h \\</div><div class="line">  --v=2</div><div class="line">Restart=on-failure</div><div class="line">RestartSec=5</div><div class="line">Type=notify</div><div class="line">LimitNOFILE=65536</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<ul>
+<li>kube-apiserver 1.6 版本开始使用 etcd v3 API 和存储格式；</li>
+<li><code>--authorization-mode=RBAC</code> 指定在安全端口使用 RBAC 授权模式，拒绝未通过授权的请求；</li>
+<li>kube-scheduler、kube-controller-manager 一般和 kube-apiserver 部署在同一台机器上，它们使用<strong>非安全端口</strong>和 kube-apiserver通信;</li>
+<li>kubelet、kube-proxy、kubectl 部署在其它 Node 节点上，如果通过<strong>安全端口</strong>访问 kube-apiserver，则必须先通过 TLS 证书认证，再通过 RBAC 授权；</li>
+<li>kube-proxy、kubectl 通过在使用的证书里指定相关的 User、Group 来达到通过 RBAC 授权的目的；</li>
+<li>如果使用了 kubelet TLS Boostrap 机制，则不能再指定 <code>--kubelet-certificate-authority</code>、<code>--kubelet-client-certificate</code> 和 <code>--kubelet-client-key</code> 选项，否则后续 kube-apiserver 校验 kubelet 证书时出现 ”x509: certificate signed by unknown authority“ 错误；</li>
+<li><code>--admission-control</code> 值必须包含 <code>ServiceAccount</code>，否则部署集群插件时会失败；</li>
+<li><code>--bind-address</code> 不能为 <code>127.0.0.1</code>；</li>
+<li><code>--service-cluster-ip-range</code> 指定 Service Cluster IP 地址段，该地址段不能路由可达；</li>
+<li><code>--service-node-port-range=${NODE_PORT_RANGE}</code> 指定 NodePort 的端口范围；</li>
+<li>缺省情况下 kubernetes 对象保存在 etcd <code>/registry</code> 路径下，可以通过 <code>--etcd-prefix</code> 参数进行调整；</li>
+</ul>
+<p>完整 unit 见 <a href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kube-apiserver.service" target="_blank" rel="external">kube-apiserver.service</a></p>
+<h3 id="启动-kube-apiserver"><a href="#启动-kube-apiserver" class="headerlink" title="启动 kube-apiserver"></a>启动 kube-apiserver</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ sudo cp kube-apiserver.service /etc/systemd/system/</div><div class="line">$ sudo systemctl daemon-reload</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> kube-apiserver</div><div class="line">$ sudo systemctl start kube-apiserver</div><div class="line">$ sudo systemctl status kube-apiserver</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="配置和启动-kube-controller-manager"><a href="#配置和启动-kube-controller-manager" class="headerlink" title="配置和启动 kube-controller-manager"></a>配置和启动 kube-controller-manager</h2><h3 id="创建-kube-controller-manager-的-systemd-unit-文件"><a href="#创建-kube-controller-manager-的-systemd-unit-文件" class="headerlink" title="创建 kube-controller-manager 的 systemd unit 文件"></a>创建 kube-controller-manager 的 systemd unit 文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">$ cat &gt; kube-controller-manager.service &lt;&lt;EOF</div><div class="line">[Unit]</div><div class="line">Description=Kubernetes Controller Manager</div><div class="line">Documentation=https://github.com/GoogleCloudPlatform/kubernetes</div><div class="line"></div><div class="line">[Service]</div><div class="line">ExecStart=/root/<span class="built_in">local</span>/bin/kube-controller-manager \\</div><div class="line">  --address=127.0.0.1 \\</div><div class="line">  --master=http://<span class="variable">$&#123;MASTER_IP&#125;</span>:8080 \\</div><div class="line">  --allocate-node-cidrs=<span class="literal">true</span> \\</div><div class="line">  --service-cluster-ip-range=<span class="variable">$&#123;SERVICE_CIDR&#125;</span> \\</div><div class="line">  --cluster-cidr=<span class="variable">$&#123;CLUSTER_CIDR&#125;</span> \\</div><div class="line">  --cluster-name=kubernetes \\</div><div class="line">  --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem \\</div><div class="line">  --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem \\</div><div class="line">  --root-ca-file=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --leader-elect=<span class="literal">true</span> \\</div><div class="line">  --v=2</div><div class="line">Restart=on-failure</div><div class="line">RestartSec=5</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<ul>
+<li><p><code>--address</code> 值必须为 <code>127.0.0.1</code>，因为当前 kube-apiserver 期望 scheduler 和 controller-manager 在同一台机器，否则：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ kubectl get componentstatuses</div><div class="line">NAME                 STATUS      MESSAGE                                                                                        ERROR</div><div class="line">controller-manager   Unhealthy   Get http://127.0.0.1:10252/healthz: dial tcp 127.0.0.1:10252: getsockopt: connection refused</div><div class="line">scheduler            Unhealthy   Get http://127.0.0.1:10251/healthz: dial tcp 127.0.0.1:10251: getsockopt: connection refused</div></pre></td></tr></table></figure>
+<p>  参考：<a href="https://github.com/kubernetes-incubator/bootkube/issues/64" target="_blank" rel="external">https://github.com/kubernetes-incubator/bootkube/issues/64</a></p>
+</li>
+<li><p><code>--master=http://{MASTER_IP}:8080</code>：使用非安全 8080 端口与 kube-apiserver 通信；</p>
+</li>
+<li><code>--cluster-cidr</code> 指定 Cluster 中 Pod 的 CIDR 范围，该网段在各 Node 间必须路由可达(flanneld保证)；</li>
+<li><code>--service-cluster-ip-range</code> 参数指定 Cluster 中 Service 的CIDR范围，该网络在各 Node 间必须路由不可达，必须和 kube-apiserver 中的参数一致；</li>
+<li><code>--cluster-signing-*</code> 指定的证书和私钥文件用来签名为 TLS BootStrap 创建的证书和私钥；</li>
+<li><code>--root-ca-file</code> 用来对 kube-apiserver 证书进行校验，<strong>指定该参数后，才会在Pod 容器的 ServiceAccount 中放置该 CA 证书文件</strong>；</li>
+<li><code>--leader-elect=true</code> 部署多台机器组成的 master 集群时选举产生一处于工作状态的 <code>kube-controller-manager</code> 进程；</li>
+</ul>
+<p>完整 unit 见 <a href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kube-controller-manager.service" target="_blank" rel="external">kube-controller-manager.service</a></p>
+<h3 id="启动-kube-controller-manager"><a href="#启动-kube-controller-manager" class="headerlink" title="启动 kube-controller-manager"></a>启动 kube-controller-manager</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ sudo cp kube-controller-manager.service /etc/systemd/system/</div><div class="line">$ sudo systemctl daemon-reload</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> kube-controller-manager</div><div class="line">$ sudo systemctl start kube-controller-manager</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="配置和启动-kube-scheduler"><a href="#配置和启动-kube-scheduler" class="headerlink" title="配置和启动 kube-scheduler"></a>配置和启动 kube-scheduler</h2><h3 id="创建-kube-scheduler-的-systemd-unit-文件"><a href="#创建-kube-scheduler-的-systemd-unit-文件" class="headerlink" title="创建 kube-scheduler 的 systemd unit 文件"></a>创建 kube-scheduler 的 systemd unit 文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ cat &gt; kube-scheduler.service &lt;&lt;EOF</div><div class="line">[Unit]</div><div class="line">Description=Kubernetes Scheduler</div><div class="line">Documentation=https://github.com/GoogleCloudPlatform/kubernetes</div><div class="line"></div><div class="line">[Service]</div><div class="line">ExecStart=/root/<span class="built_in">local</span>/bin/kube-scheduler \\</div><div class="line">  --address=127.0.0.1 \\</div><div class="line">  --master=http://<span class="variable">$&#123;MASTER_IP&#125;</span>:8080 \\</div><div class="line">  --leader-elect=<span class="literal">true</span> \\</div><div class="line">  --v=2</div><div class="line">Restart=on-failure</div><div class="line">RestartSec=5</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<ul>
+<li><code>--address</code> 值必须为 <code>127.0.0.1</code>，因为当前 kube-apiserver 期望 scheduler 和 controller-manager 在同一台机器；</li>
+<li><code>--master=http://{MASTER_IP}:8080</code>：使用非安全 8080 端口与 kube-apiserver 通信；</li>
+<li><code>--leader-elect=true</code> 部署多台机器组成的 master 集群时选举产生一处于工作状态的 <code>kube-controller-manager</code> 进程；</li>
+</ul>
+<p>完整 unit 见 <a href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/kube-scheduler.service" target="_blank" rel="external">kube-scheduler.service</a>。</p>
+<h3 id="启动-kube-scheduler"><a href="#启动-kube-scheduler" class="headerlink" title="启动 kube-scheduler"></a>启动 kube-scheduler</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ sudo cp kube-scheduler.service /etc/systemd/system/</div><div class="line">$ sudo systemctl daemon-reload</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> kube-scheduler</div><div class="line">$ sudo systemctl start kube-scheduler</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="验证-master-节点功能"><a href="#验证-master-节点功能" class="headerlink" title="验证 master 节点功能"></a>验证 master 节点功能</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ kubectl get componentstatuses</div><div class="line">NAME                 STATUS    MESSAGE              ERROR</div><div class="line">controller-manager   Healthy   ok</div><div class="line">scheduler            Healthy   ok</div><div class="line">etcd-0               Healthy   &#123;<span class="string">"health"</span>: <span class="string">"true"</span>&#125;</div><div class="line">etcd-1               Healthy   &#123;<span class="string">"health"</span>: <span class="string">"true"</span>&#125;</div><div class="line">etcd-2               Healthy   &#123;<span class="string">"health"</span>: <span class="string">"true"</span>&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/27/05-部署Flannel网络/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/27/07-部署Node节点/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#06-部署Master节点"><span class="nav-number">1.</span> <span class="nav-text">06-部署Master节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#部署-master-节点"><span class="nav-number"></span> <span class="nav-text">部署 master 节点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用的变量"><span class="nav-number">1.</span> <span class="nav-text">使用的变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载最新版本的二进制文件"><span class="nav-number">2.</span> <span class="nav-text">下载最新版本的二进制文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装和配置-flanneld"><span class="nav-number">3.</span> <span class="nav-text">安装和配置 flanneld</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-kubernetes-证书"><span class="nav-number">4.</span> <span class="nav-text">创建 kubernetes 证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置和启动-kube-apiserver"><span class="nav-number">5.</span> <span class="nav-text">配置和启动 kube-apiserver</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-kube-apiserver-使用的客户端-token-文件"><span class="nav-number">5.1.</span> <span class="nav-text">创建 kube-apiserver 使用的客户端 token 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-kube-apiserver-的-systemd-unit-文件"><span class="nav-number">5.2.</span> <span class="nav-text">创建 kube-apiserver 的 systemd unit 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动-kube-apiserver"><span class="nav-number">5.3.</span> <span class="nav-text">启动 kube-apiserver</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置和启动-kube-controller-manager"><span class="nav-number">6.</span> <span class="nav-text">配置和启动 kube-controller-manager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-kube-controller-manager-的-systemd-unit-文件"><span class="nav-number">6.1.</span> <span class="nav-text">创建 kube-controller-manager 的 systemd unit 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动-kube-controller-manager"><span class="nav-number">6.2.</span> <span class="nav-text">启动 kube-controller-manager</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置和启动-kube-scheduler"><span class="nav-number">7.</span> <span class="nav-text">配置和启动 kube-scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-kube-scheduler-的-systemd-unit-文件"><span class="nav-number">7.1.</span> <span class="nav-text">创建 kube-scheduler 的 systemd unit 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动-kube-scheduler"><span class="nav-number">7.2.</span> <span class="nav-text">启动 kube-scheduler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证-master-节点功能"><span class="nav-number">8.</span> <span class="nav-text">验证 master 节点功能</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

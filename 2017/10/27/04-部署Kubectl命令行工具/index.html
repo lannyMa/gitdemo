@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/10/27/04-部署Kubectl命令行工具/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-27T01:53:17.117Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/27/04-部署Kubectl命令行工具/"/>
+
+
+
+
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/27/04-部署Kubectl命令行工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-27T09:45:16+08:00">
+                2017-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="04-部署Kubectl命令行工具"><a href="#04-部署Kubectl命令行工具" class="headerlink" title="04-部署Kubectl命令行工具"></a>04-部署Kubectl命令行工具</h2><p>tags: kubectl</p>
+<h1 id="部署-kubectl-命令行工具"><a href="#部署-kubectl-命令行工具" class="headerlink" title="部署 kubectl 命令行工具"></a>部署 kubectl 命令行工具</h1><p>kubectl 默认从 <code>~/.kube/config</code> 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$  kubectl get pods</div><div class="line">The connection to the server localhost:8080 was refused - did you specify the right host or port?</div></pre></td></tr></table></figure>
+<p>本文档介绍下载和配置 kubernetes 集群命令行工具 kubectl 的步骤。</p>
+<p>需要将下载的 kubectl 二进制程序和生成的 <code>~/.kube/config</code> 配置文件拷贝到<strong>所有使用 kubectl 命令的机器</strong>。</p>
+<h2 id="使用的变量"><a href="#使用的变量" class="headerlink" title="使用的变量"></a>使用的变量</h2><p>本文档用到的变量定义如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">export</span> MASTER_IP=10.64.3.7 <span class="comment"># 替换为 kubernetes maste 集群任一机器 IP</span></div><div class="line">$ <span class="built_in">export</span> KUBE_APISERVER=<span class="string">"https://<span class="variable">$&#123;MASTER_IP&#125;</span>:6443"</span></div><div class="line">$</div></pre></td></tr></table></figure>
+<ul>
+<li>变量 KUBE_APISERVER 指定 kubelet 访问的 kube-apiserver 的地址，后续被写入 <code>~/.kube/config</code> 配置文件；</li>
+</ul>
+<h2 id="下载-kubectl"><a href="#下载-kubectl" class="headerlink" title="下载 kubectl"></a>下载 kubectl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ wget https://dl.k8s.io/v1.6.2/kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ tar -xzvf kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ sudo cp kubernetes/client/bin/kube* /root/<span class="built_in">local</span>/bin/</div><div class="line">$ chmod a+x /root/<span class="built_in">local</span>/bin/kube*</div><div class="line">$ <span class="built_in">export</span> PATH=/root/<span class="built_in">local</span>/bin:<span class="variable">$PATH</span></div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="创建-admin-证书"><a href="#创建-admin-证书" class="headerlink" title="创建 admin 证书"></a>创建 admin 证书</h2><p>kubectl 与 kube-apiserver 的安全端口通信，需要为安全通信提供 TLS 证书和秘钥。</p>
+<p>创建 admin 证书签名请求</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ cat admin-csr.json</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"admin"</span>,</div><div class="line">  <span class="string">"hosts"</span>: [],</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"system:masters"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>后续 <code>kube-apiserver</code> 使用 <code>RBAC</code> 对客户端(如 <code>kubelet</code>、<code>kube-proxy</code>、<code>Pod</code>)请求进行授权；</li>
+<li><code>kube-apiserver</code> 预定义了一些 <code>RBAC</code> 使用的 <code>RoleBindings</code>，如 <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> <strong>所有 API</strong>的权限；</li>
+<li>O 指定该证书的 Group 为 <code>system:masters</code>，<code>kubelet</code> 使用该证书访问 <code>kube-apiserver</code> 时 ，由于证书被 CA 签名，所以认证通过，同时由于证书用户组为经过预授权的 <code>system:masters</code>，所以被授予访问所有 API 的权限；</li>
+<li>hosts 属性值为空列表；</li>
+</ul>
+<p>生成 admin 证书和私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -ca=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  -ca-key=/etc/kubernetes/ssl/ca-key.pem \</div><div class="line">  -config=/etc/kubernetes/ssl/ca-config.json \</div><div class="line">  -profile=kubernetes admin-csr.json | cfssljson -bare admin</div><div class="line">$ ls admin*</div><div class="line">admin.csr  admin-csr.json  admin-key.pem  admin.pem</div><div class="line">$ sudo mv admin*.pem /etc/kubernetes/ssl/</div><div class="line">$ rm admin.csr admin-csr.json</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="创建-kubectl-kubeconfig-文件"><a href="#创建-kubectl-kubeconfig-文件" class="headerlink" title="创建 kubectl kubeconfig 文件"></a>创建 kubectl kubeconfig 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">$ <span class="comment"># 设置集群参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-cluster kubernetes \</div><div class="line">  --certificate-authority=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --server=<span class="variable">$&#123;KUBE_APISERVER&#125;</span></div><div class="line">$ <span class="comment"># 设置客户端认证参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-credentials admin \</div><div class="line">  --client-certificate=/etc/kubernetes/ssl/admin.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --client-key=/etc/kubernetes/ssl/admin-key.pem</div><div class="line">$ <span class="comment"># 设置上下文参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-context kubernetes \</div><div class="line">  --cluster=kubernetes \</div><div class="line">  --user=admin</div><div class="line">$ <span class="comment"># 设置默认上下文</span></div><div class="line">$ kubectl config use-context kubernetes</div></pre></td></tr></table></figure>
+<ul>
+<li><code>admin.pem</code> 证书 O 字段值为 <code>system:masters</code>，<code>kube-apiserver</code> 预定义的 RoleBinding <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> 相关 API 的权限；</li>
+<li>生成的 kubeconfig 被保存到 <code>~/.kube/config</code> 文件；</li>
+</ul>
+<h2 id="分发-kubeconfig-文件"><a href="#分发-kubeconfig-文件" class="headerlink" title="分发 kubeconfig 文件"></a>分发 kubeconfig 文件</h2><p>将 <code>~/.kube/config</code> 文件拷贝到运行 <code>kubelet</code> 命令的机器的 <code>~/.kube/</code> 目录下。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/27/03-部署高可用Etcd集群/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/27/05-部署Flannel网络/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#04-部署Kubectl命令行工具"><span class="nav-number">1.</span> <span class="nav-text">04-部署Kubectl命令行工具</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#部署-kubectl-命令行工具"><span class="nav-number"></span> <span class="nav-text">部署 kubectl 命令行工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用的变量"><span class="nav-number">1.</span> <span class="nav-text">使用的变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载-kubectl"><span class="nav-number">2.</span> <span class="nav-text">下载 kubectl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-admin-证书"><span class="nav-number">3.</span> <span class="nav-text">创建 admin 证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-kubectl-kubeconfig-文件"><span class="nav-number">4.</span> <span class="nav-text">创建 kubectl kubeconfig 文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分发-kubeconfig-文件"><span class="nav-number">5.</span> <span class="nav-text">分发 kubeconfig 文件</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
