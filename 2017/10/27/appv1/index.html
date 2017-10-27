@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="//maotai.me">
   <title>毛台的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+  <meta name="description" content="appv1">
 <meta name="keywords" content="各种类型挖掘机，专注于利用挖掘机技术快速解决各种疑难杂症。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="毛台的博客">
-<meta property="og:url" content="//maotai.me/2017/10/27/04-部署Kubectl命令行工具/index.html">
+<meta property="og:url" content="//maotai.me/2017/10/27/appv1/index.html">
 <meta property="og:site_name" content="毛台的博客">
-<meta property="og:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
-<meta property="og:updated_time" content="2017-10-27T01:53:17.117Z">
+<meta property="og:description" content="appv1">
+<meta property="og:updated_time" content="2017-10-27T02:10:47.904Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="毛台的博客">
-<meta name="twitter:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+<meta name="twitter:description" content="appv1">
   
     <link rel="alternative" href="/atom.xml" title="毛台的博客" type="application/atom+xml">
   
@@ -158,40 +158,12 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-04-部署Kubectl命令行工具" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-appv1" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="04-部署Kubectl命令行工具"><a href="#04-部署Kubectl命令行工具" class="headerlink" title="04-部署Kubectl命令行工具"></a>04-部署Kubectl命令行工具</h2><p>tags: kubectl</p>
-<h1 id="部署-kubectl-命令行工具"><a href="#部署-kubectl-命令行工具" class="headerlink" title="部署 kubectl 命令行工具"></a>部署 kubectl 命令行工具</h1><p>kubectl 默认从 <code>~/.kube/config</code> 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$  kubectl get pods</div><div class="line">The connection to the server localhost:8080 was refused - did you specify the right host or port?</div></pre></td></tr></table></figure>
-<p>本文档介绍下载和配置 kubernetes 集群命令行工具 kubectl 的步骤。</p>
-<p>需要将下载的 kubectl 二进制程序和生成的 <code>~/.kube/config</code> 配置文件拷贝到<strong>所有使用 kubectl 命令的机器</strong>。</p>
-<h2 id="使用的变量"><a href="#使用的变量" class="headerlink" title="使用的变量"></a>使用的变量</h2><p>本文档用到的变量定义如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">export</span> MASTER_IP=10.64.3.7 <span class="comment"># 替换为 kubernetes maste 集群任一机器 IP</span></div><div class="line">$ <span class="built_in">export</span> KUBE_APISERVER=<span class="string">"https://<span class="variable">$&#123;MASTER_IP&#125;</span>:6443"</span></div><div class="line">$</div></pre></td></tr></table></figure>
-<ul>
-<li>变量 KUBE_APISERVER 指定 kubelet 访问的 kube-apiserver 的地址，后续被写入 <code>~/.kube/config</code> 配置文件；</li>
-</ul>
-<h2 id="下载-kubectl"><a href="#下载-kubectl" class="headerlink" title="下载 kubectl"></a>下载 kubectl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ wget https://dl.k8s.io/v1.6.2/kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ tar -xzvf kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ sudo cp kubernetes/client/bin/kube* /root/<span class="built_in">local</span>/bin/</div><div class="line">$ chmod a+x /root/<span class="built_in">local</span>/bin/kube*</div><div class="line">$ <span class="built_in">export</span> PATH=/root/<span class="built_in">local</span>/bin:<span class="variable">$PATH</span></div><div class="line">$</div></pre></td></tr></table></figure>
-<h2 id="创建-admin-证书"><a href="#创建-admin-证书" class="headerlink" title="创建 admin 证书"></a>创建 admin 证书</h2><p>kubectl 与 kube-apiserver 的安全端口通信，需要为安全通信提供 TLS 证书和秘钥。</p>
-<p>创建 admin 证书签名请求</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ cat admin-csr.json</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"admin"</span>,</div><div class="line">  <span class="string">"hosts"</span>: [],</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"system:masters"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>后续 <code>kube-apiserver</code> 使用 <code>RBAC</code> 对客户端(如 <code>kubelet</code>、<code>kube-proxy</code>、<code>Pod</code>)请求进行授权；</li>
-<li><code>kube-apiserver</code> 预定义了一些 <code>RBAC</code> 使用的 <code>RoleBindings</code>，如 <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> <strong>所有 API</strong>的权限；</li>
-<li>O 指定该证书的 Group 为 <code>system:masters</code>，<code>kubelet</code> 使用该证书访问 <code>kube-apiserver</code> 时 ，由于证书被 CA 签名，所以认证通过，同时由于证书用户组为经过预授权的 <code>system:masters</code>，所以被授予访问所有 API 的权限；</li>
-<li>hosts 属性值为空列表；</li>
-</ul>
-<p>生成 admin 证书和私钥：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -ca=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  -ca-key=/etc/kubernetes/ssl/ca-key.pem \</div><div class="line">  -config=/etc/kubernetes/ssl/ca-config.json \</div><div class="line">  -profile=kubernetes admin-csr.json | cfssljson -bare admin</div><div class="line">$ ls admin*</div><div class="line">admin.csr  admin-csr.json  admin-key.pem  admin.pem</div><div class="line">$ sudo mv admin*.pem /etc/kubernetes/ssl/</div><div class="line">$ rm admin.csr admin-csr.json</div><div class="line">$</div></pre></td></tr></table></figure>
-<h2 id="创建-kubectl-kubeconfig-文件"><a href="#创建-kubectl-kubeconfig-文件" class="headerlink" title="创建 kubectl kubeconfig 文件"></a>创建 kubectl kubeconfig 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">$ <span class="comment"># 设置集群参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-cluster kubernetes \</div><div class="line">  --certificate-authority=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --server=<span class="variable">$&#123;KUBE_APISERVER&#125;</span></div><div class="line">$ <span class="comment"># 设置客户端认证参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-credentials admin \</div><div class="line">  --client-certificate=/etc/kubernetes/ssl/admin.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --client-key=/etc/kubernetes/ssl/admin-key.pem</div><div class="line">$ <span class="comment"># 设置上下文参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-context kubernetes \</div><div class="line">  --cluster=kubernetes \</div><div class="line">  --user=admin</div><div class="line">$ <span class="comment"># 设置默认上下文</span></div><div class="line">$ kubectl config use-context kubernetes</div></pre></td></tr></table></figure>
-<ul>
-<li><code>admin.pem</code> 证书 O 字段值为 <code>system:masters</code>，<code>kube-apiserver</code> 预定义的 RoleBinding <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> 相关 API 的权限；</li>
-<li>生成的 kubeconfig 被保存到 <code>~/.kube/config</code> 文件；</li>
-</ul>
-<h2 id="分发-kubeconfig-文件"><a href="#分发-kubeconfig-文件" class="headerlink" title="分发 kubeconfig 文件"></a>分发 kubeconfig 文件</h2><p>将 <code>~/.kube/config</code> 文件拷贝到运行 <code>kubelet</code> 命令的机器的 <code>~/.kube/</code> 目录下。</p>
-
+        <h1 id="appv1"><a href="#appv1" class="headerlink" title="appv1"></a>appv1</h1>
       
 
       
@@ -270,7 +242,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://maotai.me/2017/10/27/04-部署Kubectl命令行工具/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://maotai.me/2017/10/27/appv1/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -284,17 +256,8 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/10/27/05-部署Flannel网络/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/10/27/03-部署高可用Etcd集群/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/10/27/README/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title"></div>
       <i class="icon-circle-right"></i>
     </a>

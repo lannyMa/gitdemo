@@ -8,17 +8,16 @@
   <link rel="dns-prefetch" href="//maotai.me">
   <title>毛台的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+  <meta name="description" content="老农，曾就学与蓝翔挖掘机系，数次获取奖学金。">
 <meta name="keywords" content="各种类型挖掘机，专注于利用挖掘机技术快速解决各种疑难杂症。">
-<meta property="og:type" content="article">
+<meta property="og:type" content="website">
 <meta property="og:title" content="毛台的博客">
-<meta property="og:url" content="//maotai.me/2017/10/27/04-部署Kubectl命令行工具/index.html">
+<meta property="og:url" content="//maotai.me/page/2/index.html">
 <meta property="og:site_name" content="毛台的博客">
-<meta property="og:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
-<meta property="og:updated_time" content="2017-10-27T01:53:17.117Z">
+<meta property="og:description" content="老农，曾就学与蓝翔挖掘机系，数次获取奖学金。">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="毛台的博客">
-<meta name="twitter:description" content="04-部署Kubectl命令行工具tags: kubectl 部署 kubectl 命令行工具kubectl 默认从 ~/.kube/config 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错： 12$  kubectl get podsThe connection to the server localhost:8080 was r">
+<meta name="twitter:description" content="老农，曾就学与蓝翔挖掘机系，数次获取奖学金。">
   
     <link rel="alternative" href="/atom.xml" title="毛台的博客" type="application/atom+xml">
   
@@ -158,63 +157,50 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-04-部署Kubectl命令行工具" class="article article-type-post " itemscope itemprop="blogPost">
+            
+  
+    <article id="post-03-部署高可用Etcd集群" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="04-部署Kubectl命令行工具"><a href="#04-部署Kubectl命令行工具" class="headerlink" title="04-部署Kubectl命令行工具"></a>04-部署Kubectl命令行工具</h2><p>tags: kubectl</p>
-<h1 id="部署-kubectl-命令行工具"><a href="#部署-kubectl-命令行工具" class="headerlink" title="部署 kubectl 命令行工具"></a>部署 kubectl 命令行工具</h1><p>kubectl 默认从 <code>~/.kube/config</code> 配置文件获取访问 kube-apiserver 地址、证书、用户名等信息，如果没有配置该文件，执行命令时出错：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$  kubectl get pods</div><div class="line">The connection to the server localhost:8080 was refused - did you specify the right host or port?</div></pre></td></tr></table></figure>
-<p>本文档介绍下载和配置 kubernetes 集群命令行工具 kubectl 的步骤。</p>
-<p>需要将下载的 kubectl 二进制程序和生成的 <code>~/.kube/config</code> 配置文件拷贝到<strong>所有使用 kubectl 命令的机器</strong>。</p>
+        <h2 id="03-部署高可用Etcd集群"><a href="#03-部署高可用Etcd集群" class="headerlink" title="03-部署高可用Etcd集群"></a>03-部署高可用Etcd集群</h2><p>tags: etcd</p>
+<h1 id="部署高可用-etcd-集群"><a href="#部署高可用-etcd-集群" class="headerlink" title="部署高可用 etcd 集群"></a>部署高可用 etcd 集群</h1><p>kuberntes 系统使用 etcd 存储所有数据，本文档介绍部署一个三节点高可用 etcd 集群的步骤，这三个节点复用 kubernetes master 机器，分别命名为<code>etcd-host0</code>、<code>etcd-host1</code>、<code>etcd-host2</code>：</p>
+<ul>
+<li>etcd-host0：10.64.3.7</li>
+<li>etcd-host1：10.64.3.8</li>
+<li>etcd-host2：10.66.3.86</li>
+</ul>
 <h2 id="使用的变量"><a href="#使用的变量" class="headerlink" title="使用的变量"></a>使用的变量</h2><p>本文档用到的变量定义如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">export</span> MASTER_IP=10.64.3.7 <span class="comment"># 替换为 kubernetes maste 集群任一机器 IP</span></div><div class="line">$ <span class="built_in">export</span> KUBE_APISERVER=<span class="string">"https://<span class="variable">$&#123;MASTER_IP&#125;</span>:6443"</span></div><div class="line">$</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">export</span> NODE_NAME=etcd-host0 <span class="comment"># 当前部署的机器名称(随便定义，只要能区分不同机器即可)</span></div><div class="line">$ <span class="built_in">export</span> NODE_IP=10.64.3.7 <span class="comment"># 当前部署的机器 IP</span></div><div class="line">$ <span class="built_in">export</span> NODE_IPS=<span class="string">"10.64.3.7 10.64.3.8 10.66.3.86"</span> <span class="comment"># etcd 集群所有机器 IP</span></div><div class="line">$ <span class="comment"># etcd 集群间通信的IP和端口</span></div><div class="line">$ <span class="built_in">export</span> ETCD_NODES=etcd-host0=https://10.64.3.7:2380,etcd-host1=https://10.64.3.8:2380,etcd-host2=https://10.66.3.86:2380</div><div class="line">$ <span class="comment"># 导入用到的其它全局变量：ETCD_ENDPOINTS、FLANNEL_ETCD_PREFIX、CLUSTER_CIDR</span></div><div class="line">$ <span class="built_in">source</span> /root/<span class="built_in">local</span>/bin/environment.sh</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="下载二进制文件"><a href="#下载二进制文件" class="headerlink" title="下载二进制文件"></a>下载二进制文件</h2><p>到 <code>https://github.com/coreos/etcd/releases</code> 页面下载最新版本的二进制文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ wget https://github.com/coreos/etcd/releases/download/v3.1.6/etcd-v3.1.6-linux-amd64.tar.gz</div><div class="line">$ tar -xvf etcd-v3.1.6-linux-amd64.tar.gz</div><div class="line">$ sudo mv etcd-v3.1.6-linux-amd64/etcd* /root/<span class="built_in">local</span>/bin</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="创建-TLS-秘钥和证书"><a href="#创建-TLS-秘钥和证书" class="headerlink" title="创建 TLS 秘钥和证书"></a>创建 TLS 秘钥和证书</h2><p>为了保证通信安全，客户端(如 etcdctl) 与 etcd 集群、etcd 集群之间的通信需要使用 TLS 加密，本节创建 etcd TLS 加密所需的证书和私钥。</p>
+<p>创建 etcd 证书签名请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">$ cat &gt; etcd-csr.json &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"etcd"</span>,</div><div class="line">  <span class="string">"hosts"</span>: [</div><div class="line">    <span class="string">"127.0.0.1"</span>,</div><div class="line">    <span class="string">"<span class="variable">$&#123;NODE_IP&#125;</span>"</span></div><div class="line">  ],</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"k8s"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure>
 <ul>
-<li>变量 KUBE_APISERVER 指定 kubelet 访问的 kube-apiserver 的地址，后续被写入 <code>~/.kube/config</code> 配置文件；</li>
+<li>hosts 字段指定授权使用该证书的 etcd 节点 IP；</li>
 </ul>
-<h2 id="下载-kubectl"><a href="#下载-kubectl" class="headerlink" title="下载 kubectl"></a>下载 kubectl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ wget https://dl.k8s.io/v1.6.2/kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ tar -xzvf kubernetes-client-linux-amd64.tar.gz</div><div class="line">$ sudo cp kubernetes/client/bin/kube* /root/<span class="built_in">local</span>/bin/</div><div class="line">$ chmod a+x /root/<span class="built_in">local</span>/bin/kube*</div><div class="line">$ <span class="built_in">export</span> PATH=/root/<span class="built_in">local</span>/bin:<span class="variable">$PATH</span></div><div class="line">$</div></pre></td></tr></table></figure>
-<h2 id="创建-admin-证书"><a href="#创建-admin-证书" class="headerlink" title="创建 admin 证书"></a>创建 admin 证书</h2><p>kubectl 与 kube-apiserver 的安全端口通信，需要为安全通信提供 TLS 证书和秘钥。</p>
-<p>创建 admin 证书签名请求</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ cat admin-csr.json</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"admin"</span>,</div><div class="line">  <span class="string">"hosts"</span>: [],</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"system:masters"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>生成 etcd 证书和私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -ca=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  -ca-key=/etc/kubernetes/ssl/ca-key.pem \</div><div class="line">  -config=/etc/kubernetes/ssl/ca-config.json \</div><div class="line">  -profile=kubernetes etcd-csr.json | cfssljson -bare etcd</div><div class="line">$ ls etcd*</div><div class="line">etcd.csr  etcd-csr.json  etcd-key.pem etcd.pem</div><div class="line">$ sudo mkdir -p /etc/etcd/ssl</div><div class="line">$ sudo mv etcd*.pem /etc/etcd/ssl</div><div class="line">$ rm etcd.csr  etcd-csr.json</div></pre></td></tr></table></figure>
+<h2 id="创建-etcd-的-systemd-unit-文件"><a href="#创建-etcd-的-systemd-unit-文件" class="headerlink" title="创建 etcd 的 systemd unit 文件"></a>创建 etcd 的 systemd unit 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">$ sudo mkdir -p /var/lib/etcd  <span class="comment"># 必须先创建工作目录</span></div><div class="line">$ cat &gt; etcd.service &lt;&lt;EOF</div><div class="line">[Unit]</div><div class="line">Description=Etcd Server</div><div class="line">After=network.target</div><div class="line">After=network-online.target</div><div class="line">Wants=network-online.target</div><div class="line">Documentation=https://github.com/coreos</div><div class="line"></div><div class="line">[Service]</div><div class="line">Type=notify</div><div class="line">WorkingDirectory=/var/lib/etcd/</div><div class="line">ExecStart=/root/<span class="built_in">local</span>/bin/etcd \\</div><div class="line">  --name=<span class="variable">$&#123;NODE_NAME&#125;</span> \\</div><div class="line">  --cert-file=/etc/etcd/ssl/etcd.pem \\</div><div class="line">  --key-file=/etc/etcd/ssl/etcd-key.pem \\</div><div class="line">  --peer-cert-file=/etc/etcd/ssl/etcd.pem \\</div><div class="line">  --peer-key-file=/etc/etcd/ssl/etcd-key.pem \\</div><div class="line">  --trusted-ca-file=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --peer-trusted-ca-file=/etc/kubernetes/ssl/ca.pem \\</div><div class="line">  --initial-advertise-peer-urls=https://<span class="variable">$&#123;NODE_IP&#125;</span>:2380 \\</div><div class="line">  --listen-peer-urls=https://<span class="variable">$&#123;NODE_IP&#125;</span>:2380 \\</div><div class="line">  --listen-client-urls=https://<span class="variable">$&#123;NODE_IP&#125;</span>:2379,http://127.0.0.1:2379 \\</div><div class="line">  --advertise-client-urls=https://<span class="variable">$&#123;NODE_IP&#125;</span>:2379 \\</div><div class="line">  --initial-cluster-token=etcd-cluster-0 \\</div><div class="line">  --initial-cluster=<span class="variable">$&#123;ETCD_NODES&#125;</span> \\</div><div class="line">  --initial-cluster-state=new \\</div><div class="line">  --data-dir=/var/lib/etcd</div><div class="line">Restart=on-failure</div><div class="line">RestartSec=5</div><div class="line">LimitNOFILE=65536</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div><div class="line">EOF</div></pre></td></tr></table></figure>
 <ul>
-<li>后续 <code>kube-apiserver</code> 使用 <code>RBAC</code> 对客户端(如 <code>kubelet</code>、<code>kube-proxy</code>、<code>Pod</code>)请求进行授权；</li>
-<li><code>kube-apiserver</code> 预定义了一些 <code>RBAC</code> 使用的 <code>RoleBindings</code>，如 <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> <strong>所有 API</strong>的权限；</li>
-<li>O 指定该证书的 Group 为 <code>system:masters</code>，<code>kubelet</code> 使用该证书访问 <code>kube-apiserver</code> 时 ，由于证书被 CA 签名，所以认证通过，同时由于证书用户组为经过预授权的 <code>system:masters</code>，所以被授予访问所有 API 的权限；</li>
-<li>hosts 属性值为空列表；</li>
+<li>指定 <code>etcd</code> 的工作目录和数据目录为 <code>/var/lib/etcd</code>，需在启动服务前创建这个目录；</li>
+<li>为了保证通信安全，需要指定 etcd 的公私钥(cert-file和key-file)、Peers 通信的公私钥和 CA 证书(peer-cert-file、peer-key-file、peer-trusted-ca-file)、客户端的CA证书（trusted-ca-file）；</li>
+<li><code>--initial-cluster-state</code> 值为 <code>new</code> 时，<code>--name</code> 的参数值必须位于 <code>--initial-cluster</code> 列表中；</li>
 </ul>
-<p>生成 admin 证书和私钥：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -ca=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  -ca-key=/etc/kubernetes/ssl/ca-key.pem \</div><div class="line">  -config=/etc/kubernetes/ssl/ca-config.json \</div><div class="line">  -profile=kubernetes admin-csr.json | cfssljson -bare admin</div><div class="line">$ ls admin*</div><div class="line">admin.csr  admin-csr.json  admin-key.pem  admin.pem</div><div class="line">$ sudo mv admin*.pem /etc/kubernetes/ssl/</div><div class="line">$ rm admin.csr admin-csr.json</div><div class="line">$</div></pre></td></tr></table></figure>
-<h2 id="创建-kubectl-kubeconfig-文件"><a href="#创建-kubectl-kubeconfig-文件" class="headerlink" title="创建 kubectl kubeconfig 文件"></a>创建 kubectl kubeconfig 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">$ <span class="comment"># 设置集群参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-cluster kubernetes \</div><div class="line">  --certificate-authority=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --server=<span class="variable">$&#123;KUBE_APISERVER&#125;</span></div><div class="line">$ <span class="comment"># 设置客户端认证参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-credentials admin \</div><div class="line">  --client-certificate=/etc/kubernetes/ssl/admin.pem \</div><div class="line">  --embed-certs=<span class="literal">true</span> \</div><div class="line">  --client-key=/etc/kubernetes/ssl/admin-key.pem</div><div class="line">$ <span class="comment"># 设置上下文参数</span></div><div class="line">$ kubectl config <span class="built_in">set</span>-context kubernetes \</div><div class="line">  --cluster=kubernetes \</div><div class="line">  --user=admin</div><div class="line">$ <span class="comment"># 设置默认上下文</span></div><div class="line">$ kubectl config use-context kubernetes</div></pre></td></tr></table></figure>
-<ul>
-<li><code>admin.pem</code> 证书 O 字段值为 <code>system:masters</code>，<code>kube-apiserver</code> 预定义的 RoleBinding <code>cluster-admin</code> 将 Group <code>system:masters</code> 与 Role <code>cluster-admin</code> 绑定，该 Role 授予了调用<code>kube-apiserver</code> 相关 API 的权限；</li>
-<li>生成的 kubeconfig 被保存到 <code>~/.kube/config</code> 文件；</li>
-</ul>
-<h2 id="分发-kubeconfig-文件"><a href="#分发-kubeconfig-文件" class="headerlink" title="分发 kubeconfig 文件"></a>分发 kubeconfig 文件</h2><p>将 <code>~/.kube/config</code> 文件拷贝到运行 <code>kubelet</code> 命令的机器的 <code>~/.kube/</code> 目录下。</p>
+<p>完整 unit 文件见：<a href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/systemd/etcd.service" target="_blank" rel="external">etcd.service</a></p>
+<h2 id="启动-etcd-服务"><a href="#启动-etcd-服务" class="headerlink" title="启动 etcd 服务"></a>启动 etcd 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ sudo mv etcd.service /etc/systemd/system/</div><div class="line">$ sudo systemctl daemon-reload</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> etcd</div><div class="line">$ sudo systemctl start etcd</div><div class="line">$ systemctl status etcd</div><div class="line">$</div></pre></td></tr></table></figure>
+<p>最先启动的 etcd 进程会卡住一段时间，等待其它节点上的 etcd 进程加入集群，为正常现象。</p>
+<p>在所有的 etcd 节点重复上面的步骤，直到所有机器的 etcd 服务都已启动。</p>
+<h2 id="验证服务"><a href="#验证服务" class="headerlink" title="验证服务"></a>验证服务</h2><p>部署完 etcd 集群后，在任一 etcd 集群节点上执行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">for</span> ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS&#125;</span>; <span class="keyword">do</span></div><div class="line">  ETCDCTL_API=3 /root/<span class="built_in">local</span>/bin/etcdctl \</div><div class="line">  --endpoints=https://<span class="variable">$&#123;ip&#125;</span>:2379  \</div><div class="line">  --cacert=/etc/kubernetes/ssl/ca.pem \</div><div class="line">  --cert=/etc/etcd/ssl/etcd.pem \</div><div class="line">  --key=/etc/etcd/ssl/etcd-key.pem \</div><div class="line">  endpoint health; <span class="keyword">done</span></div></pre></td></tr></table></figure>
+<p>预期结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">2017-04-10 14:50:50.011317 I | warning: ignoring ServerName for user-provided CA for backwards compatibility is deprecated</div><div class="line">https://10.64.3.7:2379 is healthy: successfully committed proposal: took = 1.687897ms</div><div class="line">2017-04-10 14:50:50.061577 I | warning: ignoring ServerName for user-provided CA for backwards compatibility is deprecated</div><div class="line">https://10.64.3.8:2379 is healthy: successfully committed proposal: took = 1.246915ms</div><div class="line">2017-04-10 14:50:50.104718 I | warning: ignoring ServerName for user-provided CA for backwards compatibility is deprecated</div><div class="line">https://10.66.3.86:2379 is healthy: successfully committed proposal: took = 1.509229ms</div></pre></td></tr></table></figure>
+<p>三台 etcd 的输出均为 healthy 时表示集群服务正常（忽略 warning 信息）。</p>
 
       
 
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -223,84 +209,16 @@
       
 
       
-
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/27/03-部署高可用Etcd集群/">展开全文 >></a>
+        </p>
       
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
-        </div>
-      </div>
-    </span>
-  </div>
-</div>
 
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://maotai.me/2017/10/27/04-部署Kubectl命令行工具/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/10/27/05-部署Flannel网络/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/10/27/03-部署高可用Etcd集群/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title"></div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -320,14 +238,166 @@
 
 
 
-  
-  
-  
 
   
+    <article id="post-02-创建CA证书和秘钥" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="02-创建CA证书和秘钥"><a href="#02-创建CA证书和秘钥" class="headerlink" title="02-创建CA证书和秘钥"></a>02-创建CA证书和秘钥</h2><p>tags: TLS, CA</p>
+<h1 id="创建-CA-证书和秘钥"><a href="#创建-CA-证书和秘钥" class="headerlink" title="创建 CA 证书和秘钥"></a>创建 CA 证书和秘钥</h1><p><code>kubernetes</code> 系统各组件需要使用 <code>TLS</code> 证书对通信进行加密，本文档使用 <code>CloudFlare</code> 的 PKI 工具集 <a href="https://github.com/cloudflare/cfssl" target="_blank" rel="external">cfssl</a> 来生成 Certificate Authority (CA) 证书和秘钥文件，CA 是自签名的证书，用来签名后续创建的其它 TLS 证书。</p>
+<h2 id="安装-CFSSL"><a href="#安装-CFSSL" class="headerlink" title="安装 CFSSL"></a>安装 <code>CFSSL</code></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64</div><div class="line">$ chmod +x cfssl_linux-amd64</div><div class="line">$ sudo mv cfssl_linux-amd64 /root/<span class="built_in">local</span>/bin/cfssl</div><div class="line"></div><div class="line">$ wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64</div><div class="line">$ chmod +x cfssljson_linux-amd64</div><div class="line">$ sudo mv cfssljson_linux-amd64 /root/<span class="built_in">local</span>/bin/cfssljson</div><div class="line"></div><div class="line">$ wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64</div><div class="line">$ chmod +x cfssl-certinfo_linux-amd64</div><div class="line">$ sudo mv cfssl-certinfo_linux-amd64 /root/<span class="built_in">local</span>/bin/cfssl-certinfo</div><div class="line"></div><div class="line">$ <span class="built_in">export</span> PATH=/root/<span class="built_in">local</span>/bin:<span class="variable">$PATH</span></div><div class="line">$ mkdir ssl</div><div class="line">$ <span class="built_in">cd</span> ssl</div><div class="line">$ cfssl <span class="built_in">print</span>-defaults config &gt; config.json</div><div class="line">$ cfssl <span class="built_in">print</span>-defaults csr &gt; csr.json</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="创建-CA-Certificate-Authority"><a href="#创建-CA-Certificate-Authority" class="headerlink" title="创建 CA (Certificate Authority)"></a>创建 CA (Certificate Authority)</h2><p>创建 CA 配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">$ cat ca-config.json</div><div class="line">&#123;</div><div class="line">  <span class="string">"signing"</span>: &#123;</div><div class="line">    <span class="string">"default"</span>: &#123;</div><div class="line">      <span class="string">"expiry"</span>: <span class="string">"8760h"</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"profiles"</span>: &#123;</div><div class="line">      <span class="string">"kubernetes"</span>: &#123;</div><div class="line">        <span class="string">"usages"</span>: [</div><div class="line">            <span class="string">"signing"</span>,</div><div class="line">            <span class="string">"key encipherment"</span>,</div><div class="line">            <span class="string">"server auth"</span>,</div><div class="line">            <span class="string">"client auth"</span></div><div class="line">        ],</div><div class="line">        <span class="string">"expiry"</span>: <span class="string">"8760h"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>ca-config.json</code>：可以定义多个 profiles，分别指定不同的过期时间、使用场景等参数；后续在签名证书时使用某个 profile；</li>
+<li><code>signing</code>：表示该证书可用于签名其它证书；生成的 ca.pem 证书中 <code>CA=TRUE</code>；</li>
+<li><code>server auth</code>：表示 client 可以用该 CA 对 server 提供的证书进行验证；</li>
+<li><code>client auth</code>：表示 server 可以用该 CA 对 client 提供的证书进行验证；</li>
+</ul>
+<p>创建 CA 证书签名请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ cat ca-csr.json</div><div class="line">&#123;</div><div class="line">  <span class="string">"CN"</span>: <span class="string">"kubernetes"</span>,</div><div class="line">  <span class="string">"key"</span>: &#123;</div><div class="line">    <span class="string">"algo"</span>: <span class="string">"rsa"</span>,</div><div class="line">    <span class="string">"size"</span>: 2048</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"names"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"C"</span>: <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"ST"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"L"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"O"</span>: <span class="string">"k8s"</span>,</div><div class="line">      <span class="string">"OU"</span>: <span class="string">"System"</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>“CN”：<code>Common Name</code>，kube-apiserver 从证书中提取该字段作为请求的用户名 (User Name)；浏览器使用该字段验证网站是否合法；</li>
+<li>“O”：<code>Organization</code>，kube-apiserver 从证书中提取该字段作为请求用户所属的组 (Group)；</li>
+</ul>
+<p>生成 CA 证书和私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ cfssl gencert -initca ca-csr.json | cfssljson -bare ca</div><div class="line">$ ls ca*</div><div class="line">ca-config.json  ca.csr  ca-csr.json  ca-key.pem  ca.pem</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="分发证书"><a href="#分发证书" class="headerlink" title="分发证书"></a>分发证书</h2><p>将生成的 CA 证书、秘钥文件、配置文件拷贝到<strong>所有机器</strong>的 <code>/etc/kubernetes/ssl</code> 目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo mkdir -p /etc/kubernetes/ssl</div><div class="line">$ sudo cp ca* /etc/kubernetes/ssl</div><div class="line">$</div></pre></td></tr></table></figure>
+<h2 id="校验证书"><a href="#校验证书" class="headerlink" title="校验证书"></a>校验证书</h2><p>以校验 kubernetes 证书(后续部署 master 节点时生成的)为例：</p>
+<h3 id="使用-openssl-命令"><a href="#使用-openssl-命令" class="headerlink" title="使用 openssl 命令"></a>使用 <code>openssl</code> 命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">$ openssl x509  -noout -text -<span class="keyword">in</span>  kubernetes.pem</div><div class="line">...</div><div class="line">    Signature Algorithm: sha256WithRSAEncryption</div><div class="line">        Issuer: C=CN, ST=BeiJing, L=BeiJing, O=k8s, OU=System, CN=Kubernetes</div><div class="line">        Validity</div><div class="line">            Not Before: Apr  5 05:36:00 2017 GMT</div><div class="line">            Not After : Apr  5 05:36:00 2018 GMT</div><div class="line">        Subject: C=CN, ST=BeiJing, L=BeiJing, O=k8s, OU=System, CN=kubernetes</div><div class="line">...</div><div class="line">        X509v3 extensions:</div><div class="line">            X509v3 Key Usage: critical</div><div class="line">                Digital Signature, Key Encipherment</div><div class="line">            X509v3 Extended Key Usage:</div><div class="line">                TLS Web Server Authentication, TLS Web Client Authentication</div><div class="line">            X509v3 Basic Constraints: critical</div><div class="line">                CA:FALSE</div><div class="line">            X509v3 Subject Key Identifier:</div><div class="line">                DD:52:04:43:10:13:A9:29:24:17:3A:0E:D7:14:DB:36:F8:6C:E0:E0</div><div class="line">            X509v3 Authority Key Identifier:</div><div class="line">                keyid:44:04:3B:60:BD:69:78:14:68:AF:A0:41:13:F6:17:07:13:63:58:CD</div><div class="line"></div><div class="line">            X509v3 Subject Alternative Name:</div><div class="line">                DNS:kubernetes, DNS:kubernetes.default, DNS:kubernetes.default.svc, DNS:kubernetes.default.svc.cluster, DNS:kubernetes.default.svc.cluster.local, IP Address:127.0.0.1, IP Address:10.64.3.7, IP Address:10.254.0.1</div><div class="line">...</div></pre></td></tr></table></figure>
+<ul>
+<li>确认 <code>Issuer</code> 字段的内容和 <code>ca-csr.json</code> 一致；</li>
+<li>确认 <code>Subject</code> 字段的内容和 <code>kubernetes-csr.json</code> 一致；</li>
+<li>确认 <code>X509v3 Subject Alternative Name</code> 字段的内容和 <code>kubernetes-csr.json</code> 一致；</li>
+<li>确认 <code>X509v3 Key Usage、Extended Key Usage</code> 字段的内容和 <code>ca-config.json</code> 中 <code>kubernetes</code> profile 一致；</li>
+</ul>
+<h3 id="使用-cfssl-certinfo-命令"><a href="#使用-cfssl-certinfo-命令" class="headerlink" title="使用 cfssl-certinfo 命令"></a>使用 <code>cfssl-certinfo</code> 命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">$ cfssl-certinfo -cert kubernetes.pem</div><div class="line">...</div><div class="line">&#123;</div><div class="line">  <span class="string">"subject"</span>: &#123;</div><div class="line">    <span class="string">"common_name"</span>: <span class="string">"kubernetes"</span>,</div><div class="line">    <span class="string">"country"</span>: <span class="string">"CN"</span>,</div><div class="line">    <span class="string">"organization"</span>: <span class="string">"k8s"</span>,</div><div class="line">    <span class="string">"organizational_unit"</span>: <span class="string">"System"</span>,</div><div class="line">    <span class="string">"locality"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">    <span class="string">"province"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">    <span class="string">"names"</span>: [</div><div class="line">      <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"k8s"</span>,</div><div class="line">      <span class="string">"System"</span>,</div><div class="line">      <span class="string">"kubernetes"</span></div><div class="line">    ]</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"issuer"</span>: &#123;</div><div class="line">    <span class="string">"common_name"</span>: <span class="string">"Kubernetes"</span>,</div><div class="line">    <span class="string">"country"</span>: <span class="string">"CN"</span>,</div><div class="line">    <span class="string">"organization"</span>: <span class="string">"k8s"</span>,</div><div class="line">    <span class="string">"organizational_unit"</span>: <span class="string">"System"</span>,</div><div class="line">    <span class="string">"locality"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">    <span class="string">"province"</span>: <span class="string">"BeiJing"</span>,</div><div class="line">    <span class="string">"names"</span>: [</div><div class="line">      <span class="string">"CN"</span>,</div><div class="line">      <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"BeiJing"</span>,</div><div class="line">      <span class="string">"k8s"</span>,</div><div class="line">      <span class="string">"System"</span>,</div><div class="line">      <span class="string">"Kubernetes"</span></div><div class="line">    ]</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"serial_number"</span>: <span class="string">"174360492872423263473151971632292895707129022309"</span>,</div><div class="line">  <span class="string">"sans"</span>: [</div><div class="line">    <span class="string">"kubernetes"</span>,</div><div class="line">    <span class="string">"kubernetes.default"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc.cluster"</span>,</div><div class="line">    <span class="string">"kubernetes.default.svc.cluster.local"</span>,</div><div class="line">    <span class="string">"127.0.0.1"</span>,</div><div class="line">    <span class="string">"10.64.3.7"</span>,</div><div class="line">    <span class="string">"10.64.3.8"</span>,</div><div class="line">    <span class="string">"10.66.3.86"</span>,</div><div class="line">    <span class="string">"10.254.0.1"</span></div><div class="line">  ],</div><div class="line">  <span class="string">"not_before"</span>: <span class="string">"2017-04-05T05:36:00Z"</span>,</div><div class="line">  <span class="string">"not_after"</span>: <span class="string">"2018-04-05T05:36:00Z"</span>,</div><div class="line">  <span class="string">"sigalg"</span>: <span class="string">"SHA256WithRSA"</span>,</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>参考</p>
+<ul>
+<li><a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html" target="_blank" rel="external">Generate self-signed certificates</a></li>
+<li><a href="https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/02-certificate-authority.md" target="_blank" rel="external">Setting up a Certificate Authority and Creating TLS Certificates</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/kaushal/2012/02/17/client-certificates-vs-server-certificates/" target="_blank" rel="external">Client Certificates V/s Server Certificates</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/27/02-创建CA证书和秘钥/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
 
   
+    <article id="post-01-组件版本和集群环境" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="01-组件版本和集群环境"><a href="#01-组件版本和集群环境" class="headerlink" title="01-组件版本和集群环境"></a>01-组件版本和集群环境</h2><p>tags: kubernetes, environment</p>
+<h1 id="组件版本和集群环境"><a href="#组件版本和集群环境" class="headerlink" title="组件版本和集群环境"></a>组件版本和集群环境</h1><h2 id="集群组件和版本"><a href="#集群组件和版本" class="headerlink" title="集群组件和版本"></a>集群组件和版本</h2><ul>
+<li>Kubernetes 1.6.2</li>
+<li>Docker  17.04.0-ce</li>
+<li>Etcd 3.1.6</li>
+<li>Flanneld 0.7.1 vxlan 网络</li>
+<li>TLS 认证通信 (所有组件，如 etcd、kubernetes master 和 node)</li>
+<li>RBAC 授权</li>
+<li>kubelet TLS BootStrapping</li>
+<li>kubedns、dashboard、heapster (influxdb、grafana)、EFK (elasticsearch、fluentd、kibana) 插件</li>
+<li>私有 docker registry，使用 ceph rgw 后端存储，TLS + HTTP Basic 认证</li>
+</ul>
+<h2 id="集群机器"><a href="#集群机器" class="headerlink" title="集群机器"></a>集群机器</h2><ul>
+<li>10.64.3.7</li>
+<li>10.64.3.8</li>
+<li>10.66.3.86</li>
+</ul>
+<p>本着测试的目的，etcd 集群、kubernetes master 集群、kubernetes node 均使用这三台机器。</p>
+<h2 id="集群环境变量"><a href="#集群环境变量" class="headerlink" title="集群环境变量"></a>集群环境变量</h2><p>后续的部署步骤将使用下面定义的全局环境变量，根据<strong>自己的机器、网络情况</strong>修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># TLS Bootstrapping 使用的 Token，可以使用命令 head -c 16 /dev/urandom | od -An -t x | tr -d ' ' 生成</span></div><div class="line">BOOTSTRAP_TOKEN=<span class="string">"41f7e4ba8b7be874fcff18bf5cf41a7c"</span></div><div class="line"></div><div class="line"><span class="comment"># 建议用 未用的网段 来定义服务网段和 Pod 网段</span></div><div class="line"></div><div class="line"><span class="comment"># 服务网段 (Service CIDR），部署前路由不可达，部署后集群内使用 IP:Port 可达</span></div><div class="line">SERVICE_CIDR=<span class="string">"10.254.0.0/16"</span></div><div class="line"></div><div class="line"><span class="comment"># POD 网段 (Cluster CIDR），部署前路由不可达，**部署后**路由可达 (flanneld 保证)</span></div><div class="line">CLUSTER_CIDR=<span class="string">"172.30.0.0/16"</span></div><div class="line"></div><div class="line"><span class="comment"># 服务端口范围 (NodePort Range)</span></div><div class="line">NODE_PORT_RANGE=<span class="string">"8400-9000"</span></div><div class="line"></div><div class="line"><span class="comment"># etcd 集群服务地址列表</span></div><div class="line">ETCD_ENDPOINTS=<span class="string">"https://10.64.3.7:2379,https://10.64.3.8:2379,https://10.66.3.86:2379"</span></div><div class="line"></div><div class="line"><span class="comment"># flanneld 网络配置前缀</span></div><div class="line">FLANNEL_ETCD_PREFIX=<span class="string">"/kubernetes/network"</span></div><div class="line"></div><div class="line"><span class="comment"># kubernetes 服务 IP (预分配，一般是 SERVICE_CIDR 中第一个IP)</span></div><div class="line">CLUSTER_KUBERNETES_SVC_IP=<span class="string">"10.254.0.1"</span></div><div class="line"></div><div class="line"><span class="comment"># 集群 DNS 服务 IP (从 SERVICE_CIDR 中预分配)</span></div><div class="line">CLUSTER_DNS_SVC_IP=<span class="string">"10.254.0.2"</span></div><div class="line"></div><div class="line"><span class="comment"># 集群 DNS 域名</span></div><div class="line">CLUSTER_DNS_DOMAIN=<span class="string">"cluster.local."</span></div></pre></td></tr></table></figure>
+<ul>
+<li>打包后的变量定义见 <a href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/blob/master/manifests/environment.sh" target="_blank" rel="external">environment.sh</a>，后续部署时会<strong>提示导入</strong>该脚本；</li>
+</ul>
+<h2 id="分发集群环境变量定义脚本"><a href="#分发集群环境变量定义脚本" class="headerlink" title="分发集群环境变量定义脚本"></a>分发集群环境变量定义脚本</h2><p>把全局变量定义脚本拷贝到<strong>所有</strong>机器的 <code>/root/local/bin</code> 目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cp environment.sh /root/<span class="built_in">local</span>/bin</div><div class="line">$</div></pre></td></tr></table></figure>
+      
 
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/27/01-组件版本和集群环境/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
   
 
 
@@ -350,8 +420,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
-		isPost: true,
+		isHome: true,
+		isPost: false,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
